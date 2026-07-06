@@ -5,8 +5,14 @@
   "workspaceFolder": "/workspace",
 
   "forwardPorts": [8000, 5432],
+  "portsAttributes": {
+    "8000": { "label": "Laravel App", "onAutoForward": "openPreview" },
+    "5432": { "label": "PostgreSQL", "onAutoForward": "silent" }
+  },
 
-  "postCreateCommand": "cd server && if [ ! -f artisan ]; then composer create-project laravel/laravel .; fi",
+  "postCreateCommand": "cd server && if [ ! -f artisan ]; then composer create-project laravel/laravel .; fi && cp -n .env.example .env && php artisan key:generate",
+
+  "remoteUser": "vscode",
 
   "customizations": {
     "vscode": {

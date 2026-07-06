@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/devcontainers/php:1-8.4-bookworm
+FROM mcr.microsoft.com/devcontainers/php:8.4-bookworm
 
 RUN apt-get update && apt-get install -y \
     git \
@@ -6,9 +6,9 @@ RUN apt-get update && apt-get install -y \
     zip \
     curl \
     libpq-dev \
-    postgresql-client
-
-RUN docker-php-ext-install pdo_pgsql pgsql
+    postgresql-client \
+    && docker-php-ext-install pdo_pgsql pgsql \
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
