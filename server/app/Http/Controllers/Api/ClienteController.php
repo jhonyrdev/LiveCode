@@ -18,8 +18,13 @@ class ClienteController extends Controller
                 $q->where('estado', $request->boolean('estado'))
             )
             ->when($request->filled('buscar'), fn ($q) =>
-                $q->where('nombres', 'ilike', '%' . $request->input('buscar') . '%')
-                  ->orWhere('apellidos', 'ilike', '%' . $request->input('buscar') . '%')
+                $q->where(function ($query) use ($request) {
+                    $buscar = $request->input('buscar');
+
+                    $query->where('nombres', 'like', '%' . $buscar . '%')
+                        ->orWhere('apellidos', 'like', '%' . $buscar . '%')
+                        ->orWhere('documento', 'like', '%' . $buscar . '%');
+                })
             )
             ->orderBy('id')
             ->paginate($request->integer('per_page', 15));
@@ -33,7 +38,7 @@ class ClienteController extends Controller
     public function store(Request $request)
     {
         $validated = $this->validarDatos($request);
-        $cliente = Cliente::created($validated);
+        $cliente = Cliente::create($validated);
         return response()->json($cliente, 201);
     }
 
@@ -51,7 +56,7 @@ class ClienteController extends Controller
     public function update(Request $request, Cliente $cliente)
     {
         $validated = $this->validarDatos($request, $cliente->id);
-        $cliente = Cliente::update($validated);
+        $cliente->update($validated);
         return response()->json($cliente);
     }
 
